@@ -1,6 +1,5 @@
 ﻿from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from .functions import (
     annotate_posts_with_comments,
@@ -14,7 +13,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from .forms import PostForm, CommentForm
 from django.http import Http404
-from django.db.models import Count
 from django.urls import reverse_lazy, reverse
 from .forms import ProfileEditForm
 
@@ -36,7 +34,8 @@ def post_detail(request, id):
         pk=id
     )
 
-    if not (post.is_published and post.category.is_published and post.pub_date <= timezone.now()):
+    if not (post.is_published and post.category.is_published and
+            post.pub_date <= timezone.now()):
         if request.user != post.author:
             raise Http404
 
@@ -58,7 +57,8 @@ def post_detail(request, id):
 
 
 def category_posts(request, category_slug):
-    category = get_object_or_404(Category, slug=category_slug, is_published=True)
+    category = get_object_or_404(Category, slug=category_slug,
+                                 is_published=True)
     posts = Post.objects.filter(category=category)
     posts = annotate_posts_with_comments(posts)
     posts = filter_published_posts(posts)

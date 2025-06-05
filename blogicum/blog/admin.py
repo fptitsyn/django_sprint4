@@ -24,6 +24,7 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ('category', 'location', 'is_published')
     date_hierarchy = 'pub_date'
 
+
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('text', 'post', 'author', 'created_at')
